@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/hidden-camera-detector", "destination": "/index.html" },
+    { "source": "/hidden-camera-detector/", "destination": "/index.html" },
+    { "source": "/hidden-camera-detector/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/hidden-camera-detector/favicon.svg", "destination": "/favicon.svg" },
+    { "source": "/hidden-camera-detector/:path*", "destination": "/index.html" }
+  ]
+}

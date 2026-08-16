@@ -1,0 +1,599 @@
+BUILD PROMPT — UNIFIED PRIVACY SCANNER
+
+We already have a working IR hidden-camera detection feature in the existing iPhone project.
+
+DO NOT rebuild, replace, or remove the existing IR scanner.
+
+Inspect the existing project first, understand how the IR scanner works, preserve it, and expand the application into a unified Hidden Camera + Wireless Privacy Scanner.
+
+The objective is to combine every detection method realistically available to an iPhone, while designing the architecture to accept an optional external RF/CSI sensor later.
+
+PRODUCT CONCEPT
+
+Create one integrated scanning experience combining:
+
+* Existing IR detection
+* Optical camera-lens detection
+* Flashlight-pulsed reflection detection
+* Computer vision
+* Local Wi-Fi/network device discovery
+* Bluetooth/BLE discovery
+* Signal-strength/proximity analysis where APIs permit
+* ARKit spatial tracking
+* LiDAR/depth information on supported devices
+* Sensor fusion
+* Suspicion scoring
+* Optional future external Wi-Fi CSI/RF hardware
+
+The application must NEVER pretend the iPhone can obtain radio measurements that Apple’s public APIs do not expose.
+
+Clearly distinguish:
+
+measured data
+
+from
+
+estimated/inferred data.
+
+⸻
+
+1. PRESERVE EXISTING IR SCANNER
+
+Start by auditing the current codebase.
+
+Identify:
+
+* IR camera implementation
+* AVFoundation configuration
+* camera selection
+* frame processing
+* detection algorithm
+* permissions
+* UI
+* existing models/services
+* existing persistence
+* performance characteristics
+
+Integrate this into the new architecture.
+
+Do not unnecessarily rewrite functioning code.
+
+The IR scanner becomes one sensor feeding the central detection engine.
+
+⸻
+
+2. BUILD OPTICAL LENS HUNTER
+
+Create a new real-time camera mode designed specifically to locate tiny camera lenses.
+
+Use AVFoundation and Vision/Core Image where appropriate.
+
+Analyze:
+
+* small specular reflections
+* circular optical characteristics
+* dark central apertures
+* reflection intensity
+* circular symmetry
+* persistence across frames
+* movement relative to camera
+* reflection response from multiple viewing angles
+
+Draw tracking boxes/circles around candidate objects.
+
+Give each candidate an optical confidence score.
+
+Do NOT simply flag every bright reflection.
+
+⸻
+
+3. ACTIVE FLASHLIGHT LENS DETECTION
+
+Implement a pulsed illumination mode.
+
+Automatically alternate:
+
+TORCH ON
+TORCH OFF
+TORCH ON
+TORCH OFF
+
+Capture synchronized frames.
+
+Compare ON/OFF frames.
+
+Search for small objects whose reflected intensity changes strongly and consistently with the torch.
+
+Use this difference to reject ordinary bright objects.
+
+Track candidates across multiple frames and viewing angles.
+
+Display:
+
+Possible Optical Lens
+
+rather than claiming a camera has definitely been found.
+
+⸻
+
+4. NETWORK PRIVACY SCANNER
+
+After receiving Local Network permission, discover devices and services accessible on the current LAN using public Apple APIs.
+
+Use appropriate technologies such as:
+
+* Network.framework
+* Bonjour
+* NWBrowser
+* permitted local-network discovery mechanisms
+
+Collect only information legitimately exposed to the application.
+
+Attempt to categorize:
+
+* cameras
+* NVRs
+* smart-home devices
+* televisions
+* printers
+* computers
+* routers
+* phones
+* unknown IoT devices
+
+Look for advertised services commonly associated with video/network equipment where legally and technically appropriate.
+
+DO NOT exploit devices.
+
+DO NOT bypass authentication.
+
+DO NOT attempt unauthorized access.
+
+The purpose is device discovery and classification.
+
+Allow the user to mark devices:
+
+TRUSTED
+UNKNOWN
+INVESTIGATE
+
+Remember trusted devices locally.
+
+⸻
+
+5. BLUETOOTH/BLE SCANNER
+
+Use CoreBluetooth.
+
+Discover nearby BLE advertisements.
+
+Record:
+
+* device identifier
+* advertised name when available
+* services
+* manufacturer information when available
+* RSSI
+* detection timestamp
+
+Create a proximity-hunting interface.
+
+Do NOT convert RSSI into a falsely precise distance.
+
+Instead display:
+
+VERY WEAK
+WEAK
+MODERATE
+STRONG
+VERY STRONG
+
+and:
+
+SIGNAL GETTING STRONGER ↑
+
+SIGNAL GETTING WEAKER ↓
+
+Smooth measurements over time to reduce RSSI noise.
+
+⸻
+
+6. AR ROOM MAPPING
+
+Use ARKit to create a guided room sweep.
+
+Where hardware supports it, incorporate LiDAR/depth information.
+
+Track:
+
+* phone position
+* phone orientation
+* surfaces
+* inspected regions
+* detection positions
+
+Create a visual room coverage system.
+
+Areas should appear as:
+
+NOT SCANNED
+PARTIALLY SCANNED
+SCANNED
+INVESTIGATE
+
+When the optical or IR scanner identifies something suspicious, anchor that candidate to the approximate physical location in the AR scene.
+
+If the user moves away and returns, the marker should remain approximately attached to that location.
+
+⸻
+
+7. LIVE AR PRIVACY VIEW
+
+Create a polished live interface.
+
+While the user moves through a room, overlay detections directly on the camera feed.
+
+Example:
+
+POSSIBLE OPTICAL DEVICE
+
+Confidence: 81%
+
+Then allow:
+
+INVESTIGATE
+
+The user approaches the location and the application automatically performs a more intensive scan.
+
+⸻
+
+8. SENSOR FUSION ENGINE
+
+This is a critical component.
+
+Do not treat each scanner as an isolated feature.
+
+Create a central DetectionCandidate model.
+
+Possible evidence:
+
+* IR anomaly
+* optical reflection
+* pulsed-light response
+* lens geometry
+* repeated visual detection
+* network-device evidence
+* network-device classification
+* BLE evidence
+* BLE signal trend
+* depth/spatial information
+* multiple-angle confirmation
+* future RF/CSI evidence
+
+Each detection should contain:
+
+* unique ID
+* timestamp
+* sensor source
+* confidence
+* evidence
+* spatial position when available
+* historical observations
+
+Merge observations that likely correspond to the same physical candidate.
+
+⸻
+
+9. SUSPICION SCORE
+
+Develop an explainable 0–100 scoring system.
+
+Do NOT create arbitrary random percentages.
+
+The score must be derived from evidence.
+
+For example:
+
+IR + optical reflection + repeated detection
+
+should score substantially higher than:
+
+single optical reflection.
+
+Display WHY something received its score.
+
+Example:
+
+Wall Clock
+
+Suspicion: 91/100
+
+Optical lens signature — HIGH
+IR source — HIGH
+Detected from multiple angles — YES
+Unknown network device — POSSIBLE
+Bluetooth evidence — NONE
+
+Recommendation:
+
+Inspect this object closely.
+
+Never state that something is definitely a hidden camera unless there is sufficient direct evidence.
+
+⸻
+
+10. GUIDED ROOM SCAN
+
+Create a simple primary workflow.
+
+User presses:
+
+SCAN ROOM
+
+The application guides them through the process.
+
+Stage 1
+
+Environment preparation.
+
+Stage 2
+
+Network discovery.
+
+Stage 3
+
+Bluetooth discovery.
+
+Stage 4
+
+Normal-light optical scan.
+
+Stage 5
+
+Flashlight lens scan.
+
+Stage 6
+
+Existing IR scan.
+
+Stage 7
+
+AR verification of suspicious areas.
+
+Stage 8
+
+Results.
+
+The application should automatically determine which sensors/features the particular iPhone supports.
+
+Do not present unavailable features.
+
+⸻
+
+11. RESULTS MAP
+
+At the end of the scan, generate a visual room report.
+
+Display candidates ranked by suspicion.
+
+Example:
+
+1 — Smoke Detector
+94/100 — HIGH
+
+2 — Digital Clock
+71/100 — INVESTIGATE
+
+3 — Television
+24/100 — LOW
+
+Selecting a candidate should show:
+
+* evidence
+* images captured for analysis
+* detection history
+* approximate location
+* which sensors detected it
+* reasons for the score
+
+⸻
+
+12. PRIVACY-FIRST DESIGN
+
+Perform computer-vision processing on-device whenever practical.
+
+Room imagery should not require uploading to a server.
+
+Do not transmit room images without explicit user action and consent.
+
+Store scan information locally by default.
+
+Clearly explain permissions.
+
+⸻
+
+13. FUTURE RF/CSI SENSOR
+
+Design a protocol abstraction now for an OPTIONAL external RF accessory.
+
+Create something similar to:
+
+RFMeasurementProvider
+
+The rest of the application must not care whether RF measurements come from:
+
+* no provider
+* simulated development provider
+* future Bluetooth accessory
+* future USB-C accessory
+
+Possible future measurements include:
+
+* Wi-Fi CSI
+* RSSI
+* channel
+* frequency
+* amplitude
+* phase information
+* antenna information
+* timestamps
+
+Synchronize RF observations with ARKit pose timestamps.
+
+This will eventually allow measurements to be associated with physical locations.
+
+DO NOT fake CSI data when no RF accessory exists.
+
+⸻
+
+14. RF VISUALIZATION ARCHITECTURE
+
+Prepare the UI for a future:
+
+RF VIEW
+
+Possible visualization:
+
+LOW RF ACTIVITY → HIGH RF ACTIVITY
+
+Overlay RF measurements spatially within the AR environment.
+
+The UI must explicitly distinguish:
+
+MEASURED RF ACTIVITY
+
+from
+
+ESTIMATED LOCATION.
+
+Do not represent interpolated graphics as literal photographs of radio waves.
+
+⸻
+
+15. HARDWARE CAPABILITY DETECTION
+
+At startup determine:
+
+* available cameras
+* torch availability
+* depth capability
+* LiDAR availability
+* ARKit capabilities
+* Bluetooth availability
+* network permissions
+* external RF sensor status
+
+Build the scanning workflow dynamically around the available hardware.
+
+⸻
+
+16. USER EXPERIENCE
+
+The application should feel like a professional security instrument.
+
+Avoid gimmicky:
+
+“SPY CAMERA FOUND!!!”
+
+interfaces.
+
+Use terminology such as:
+
+LOW
+MODERATE
+ELEVATED
+HIGH SUSPICION
+
+and:
+
+POSSIBLE LENS
+IR SOURCE
+UNKNOWN NETWORK DEVICE
+WIRELESS DEVICE
+INVESTIGATE
+
+The UI should be dark, high-contrast, modern, and optimized for one-handed operation while walking around a room.
+
+⸻
+
+17. DEVELOPMENT REQUIREMENTS
+
+Use modern Swift and SwiftUI.
+
+Prefer Apple-native frameworks:
+
+AVFoundation
+Vision
+Core Image
+CoreBluetooth
+Network.framework
+ARKit
+RealityKit
+CoreML where beneficial
+
+Use async/await where appropriate.
+
+Separate:
+
+UI
+sensor acquisition
+detection algorithms
+candidate tracking
+sensor fusion
+persistence
+hardware abstraction
+
+Do not put the entire application into massive SwiftUI view files.
+
+Keep components modular and testable.
+
+⸻
+
+18. TESTING
+
+Create test scenarios using known cameras.
+
+Test:
+
+* exposed security camera
+* camera behind tinted plastic
+* camera inside clock
+* camera with IR LEDs
+* camera without IR
+* webcam
+* smartphone camera
+* reflective screw
+* polished metal
+* glass
+* mirror
+* LEDs
+* television
+* smoke detector without camera
+
+Measure:
+
+TRUE POSITIVES
+FALSE POSITIVES
+FALSE NEGATIVES
+
+Use the results to tune scoring.
+
+⸻
+
+19. MOST IMPORTANT DEVELOPMENT RULE
+
+Do not attempt to implement everything simultaneously.
+
+FIRST inspect the existing application and existing IR implementation.
+
+Then create a development plan based on the actual codebase.
+
+Recommended implementation order:
+
+Existing IR integration → DetectionCandidate architecture → pulsed flashlight/lens detector → optical tracking → BLE scanner → network scanner → AR room mapping → sensor fusion → unified room scan → reports → RF accessory abstraction.
+
+Preserve working functionality after every stage.
+
+The final objective is one application where the user presses SCAN ROOM, walks around, and receives a spatially organized, evidence-based assessment of suspicious optical and wireless devices.
+
+The existing IR scanner is the starting sensor—not a feature to rebuild.
